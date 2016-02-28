@@ -36,6 +36,7 @@ def query():
 					f.write("\t")
 					times = times + 1
 		f.write("\n")
+	f.flush()
 
 #Lists the scoreboards available
 def list():
@@ -55,23 +56,25 @@ def list():
 	#Loop of table rows
 	for row in rows[1:]:
 		cells = row.find_all('td')
+		
+		#only prints cells with information
 		if cells[0].get_text() != "":
 			f.write(cells[0].get_text() + "\n")
+	f.flush()
 
 
 
 #
 while(True):
 	#Creates file with current date and time in the name
-	f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
-	
 	whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
 	if whatdo == 0:
-		f.write("Exit")
 		break
 	if whatdo == 1:
+		f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
 		query()
 	if whatdo == 2:
+		f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
 		list()
 
 
