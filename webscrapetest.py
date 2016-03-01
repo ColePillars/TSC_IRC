@@ -76,7 +76,7 @@ while (True):
     try:
         whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
         if whatdo == 0:
-            break
+            exit()
         if whatdo == 1:
             f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
             query()
