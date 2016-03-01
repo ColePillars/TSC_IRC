@@ -78,10 +78,10 @@ while (True):
         if whatdo == 0:
             exit()
         if whatdo == 1:
-            f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
+            f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w')
             query()
         if whatdo == 2:
-            f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
+            f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w')
             listOptions()
     except:
         continue
