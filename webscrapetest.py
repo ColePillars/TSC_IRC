@@ -44,7 +44,7 @@ def query():
 	f.flush()
 
 #Lists the scoreboards available
-def list():
+def listOptions():
 	#times #rings #scores #races #bosses #freestyle
 	#Input type to be listed
 	inputStr = input('Enter Type Here: ')
@@ -70,12 +70,15 @@ def list():
 
 #Option Select
 while(True):
-	whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
-	if whatdo == 0:
-		break
-	if whatdo == 1:
-		f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
-		query()
-	if whatdo == 2:
-		f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
-		list()
+	try:
+		whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
+		if whatdo == 0:
+			break
+		if whatdo == 1:
+			f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
+			query()
+		if whatdo == 2:
+			f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.txt', 'w')
+			listOptions()
+	except:
+		continue
