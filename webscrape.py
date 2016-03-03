@@ -11,50 +11,46 @@ def query():  # Prints the top X results for a specific scoreboard
     inputArr = inputStr.split('.')
 
     # Creates Output File
-    f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w')
+    with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
+        # Creates the soup, with URL determined by Type/Level/Mission
+        URL = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + inputArr[0] + "/" + inputArr[1] + "/" + inputArr[2]
 
-    # Creates the soup, with URL determined by Type/Level/Mission
-    URL = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + inputArr[0] + "/" + inputArr[1] + "/" + inputArr[
-        2]
-    soup = BeautifulSoup(urllib.request.urlopen(URL).read(), "html.parser")
+        soup = BeautifulSoup(urllib.request.urlopen(URL).read(), "html.parser")
 
-    # Selects the table rows of interest
-    innerdata = soup.find(class_="innerdata")
-    rows = innerdata.find_all('tr')
+        # Selects the table rows of interest
+        innerdata = soup.find(class_="innerdata")
+        rows = innerdata.find_all('tr')
 
-    # Final row
-    stopIndex = 1 + int(inputArr[3])
+        # Final row
+        stopIndex = 1 + int(inputArr[3])
 
-    # Finds Longest Name
-    longestName = 0
-    for row in rows[1:stopIndex]:
-        cells = row.find_all('td')
-        for cell in cells[1:2]:
-            longestName = max(longestName, int(len(cell.get_text()) / 4))
+        # Finds Longest Name
+        longestName = 0
+        for row in rows[1:stopIndex]:
+            cells = row.find_all('td')
+            for cell in cells[1:2]:
+                longestName = max(longestName, int(len(cell.get_text()) / 4))
 
-    # Loop of table rows up to the number specified
-    for row in rows[1:stopIndex]:
-        cells = row.find_all('td')
-        try:
-            title = cells[2]['title']
-        except:
-            title = ""
+        # Loop of table rows up to the number specified
+        for row in rows[1:stopIndex]:
+            cells = row.find_all('td')
+            try:
+                title = cells[2]['title']
+            except:
+                title = ""
 
-        # Loop through data in each table row
-        for cell in cells[1:]:
-            f.write(cell.get_text() + "\t")
+            # Loop through data in each table row
+            for cell in cells[1:]:
+                f.write(cell.get_text() + "\t")
 
-            # Adds tabs based on name length
-            if cells.index(cell) == 1 and stopIndex > 2:
-                times = int(len(cell.get_text()) / 4)
-                while times < longestName:
-                    f.write("\t")
-                    times += 1
-        f.write(str(title))
-        f.write("\n")
-
-    # Closes Output File
-    f.close()
+                # Adds tabs based on name length
+                if cells.index(cell) == 1 and stopIndex > 2:
+                    times = int(len(cell.get_text()) / 4)
+                    while times < longestName:
+                        f.write("\t")
+                        times += 1
+            f.write(str(title))
+            f.write("\n")
 
 
 def list_options():  # Lists the scoreboards available
@@ -63,26 +59,23 @@ def list_options():  # Lists the scoreboards available
     inputStr = input('Enter Type Here: ')
 
     # Creates Output File
-    f = open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w')
+    with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
 
-    # Creates the soup, with URL determined by Type
-    URL = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + inputStr
-    soup = BeautifulSoup(urllib.request.urlopen(URL).read(), "html.parser")
+        # Creates the soup, with URL determined by Type
+        URL = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + inputStr
+        soup = BeautifulSoup(urllib.request.urlopen(URL).read(), "html.parser")
 
-    # Selects the table rows of interest
-    innerdata = soup.find(class_="innerdata")
-    rows = innerdata.find_all('tr')
+        # Selects the table rows of interest
+        innerdata = soup.find(class_="innerdata")
+        rows = innerdata.find_all('tr')
 
-    # Loop of table rows
-    for row in rows[1:]:
-        cells = row.find_all('td')
+        # Loop of table rows
+        for row in rows[1:]:
+            cells = row.find_all('td')
 
-        # Only prints cells with information
-        if cells[0].get_text() != "":
-            f.write(cells[0].get_text() + "\n")
-
-    # Closes Output File
-    f.close()
+            # Only prints cells with information
+            if cells[0].get_text() != "":
+                f.write(cells[0].get_text() + "\n")
 
 
 # Option Select
