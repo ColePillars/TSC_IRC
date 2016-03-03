@@ -7,22 +7,35 @@ from bs4 import BeautifulSoup
 
 def query():  # Prints the top X results for a specific scoreboard
     # Input scoreboard information and number of items to display
-    inputStr = input('type.level.mission.howmany: ')
-    inputArr = inputStr.split('.')
+    input_str = input('level.mission.type.howmany: ')
+    input_arr = input_str.replace(' ', '').split('.')
+    default_arr = ['city_escape','mission_1','times','1']
+    actual_arr = ['','','','']
+
+    # Inputs user information into corresponding spots in actual_arr
+    for index, item in reversed(list(enumerate(input_arr[:], start=0))):
+        actual_arr[index] = item
+
+    # Inputs default information into corresponding empty spots in actual_arr
+    for index in range(0, len(default_arr)):
+        if actual_arr[index] == '':
+            actual_arr[index] = default_arr[index]
+    print("Query for: " + actual_arr[0] + " " + actual_arr[1] + " " + actual_arr[2])
 
     # Creates Output File
     with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
         # Creates the soup, with URL determined by Type/Level/Mission
-        URL = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + inputArr[0] + "/" + inputArr[1] + "/" + inputArr[2]
+        url = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + actual_arr[2] + "/" + actual_arr[0] + "/" + \
+              actual_arr[1]
 
-        soup = BeautifulSoup(urllib.request.urlopen(URL).read(), "html.parser")
+        soup = BeautifulSoup(urllib.request.urlopen(url).read(), "html.parser")
 
         # Selects the table rows of interest
         innerdata = soup.find(class_="innerdata")
         rows = innerdata.find_all('tr')
 
         # Final row
-        stopIndex = 1 + int(inputArr[3])
+        stopIndex = 1 + int(actual_arr[3])
 
         # Finds Longest Name
         longestName = 0
@@ -42,13 +55,16 @@ def query():  # Prints the top X results for a specific scoreboard
             # Loop through data in each table row
             for cell in cells[1:]:
                 f.write(cell.get_text() + "\t")
+                print(cell.get_text() + "\t", end="")
 
                 # Adds tabs based on name length
                 if cells.index(cell) == 1 and stopIndex > 2:
                     times = int(len(cell.get_text()) / 4)
                     while times < longestName:
+                        print("\t", end="")
                         f.write("\t")
                         times += 1
+            print(str(title))
             f.write(str(title))
             f.write("\n")
 
@@ -56,14 +72,14 @@ def query():  # Prints the top X results for a specific scoreboard
 def list_options():  # Lists the scoreboards available
     # #times #rings #scores #races #bosses #freestyle
     # Input type to be listed
-    inputStr = input('Enter Type Here: ')
+    input_str = input('Enter Type Here: ')
 
     # Creates Output File
     with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
 
         # Creates the soup, with URL determined by Type
-        URL = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + inputStr
-        soup = BeautifulSoup(urllib.request.urlopen(URL).read(), "html.parser")
+        url = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + input_str
+        soup = BeautifulSoup(urllib.request.urlopen(url).read(), "html.parser")
 
         # Selects the table rows of interest
         innerdata = soup.find(class_="innerdata")
@@ -78,16 +94,15 @@ def list_options():  # Lists the scoreboards available
                 f.write(cells[0].get_text() + "\n")
 
 
-# Option Select
-def main():
+def main():  # Option Select
     while True:
         try:
-            whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
-            if whatdo == 0:
+            what_do = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
+            if what_do == 0:
                 break
-            if whatdo == 1:
+            if what_do == 1:
                 query()
-            if whatdo == 2:
+            if what_do == 2:
                 list_options()
         except:
             continue
