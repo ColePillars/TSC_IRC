@@ -1,4 +1,5 @@
 import datetime
+import sys
 import urllib.request
 
 from bs4 import BeautifulSoup
@@ -29,7 +30,7 @@ def query():  # Prints the top X results for a specific scoreboard
     for row in rows[1:stopIndex]:
         cells = row.find_all('td')
         for cell in cells[1:2]:
-            longestName = max(longestName, int(len(cell.get_text())/4))
+            longestName = max(longestName, int(len(cell.get_text()) / 4))
 
     # Loop of table rows up to the number specified
     for row in rows[1:stopIndex]:
@@ -45,7 +46,7 @@ def query():  # Prints the top X results for a specific scoreboard
 
             # Adds tabs based on name length
             if cells.index(cell) == 1 and stopIndex > 2:
-                times = int(len(cell.get_text())/4)
+                times = int(len(cell.get_text()) / 4)
                 while times < longestName:
                     f.write("\t")
                     times += 1
@@ -83,15 +84,22 @@ def list_options():  # Lists the scoreboards available
     # Closes Output File
     f.close()
 
-# Option Select
-while True:
-    try:
-        whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
-        if whatdo == 0:
-            break
-        if whatdo == 1:
-            query()
-        if whatdo == 2:
-            list_options()
-    except:
-        continue
+
+def option_select():
+    while True:
+        try:
+            whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
+            if whatdo == 0:
+                break
+            if whatdo == 1:
+                query()
+            if whatdo == 2:
+                list_options()
+        except:
+            continue
+
+
+if __name__ == "__main__":
+    option_select()
+else:
+    sys.exit()
