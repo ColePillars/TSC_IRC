@@ -85,7 +85,8 @@ def list_options():  # Lists the scoreboards available
     f.close()
 
 
-def option_select():
+# Option Select
+def main():
     while True:
         try:
             whatdo = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
@@ -100,6 +101,6 @@ def option_select():
 
 
 if __name__ == "__main__":
-    option_select()
+    main()
 else:
     sys.exit()
