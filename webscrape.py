@@ -33,38 +33,70 @@ def query():  # Prints the top X results for a specific scoreboard
         rows = innerdata.find_all('tr')
 
         # Final row
-        stop_index = 1 + int(actual_arr[3])
+        stop_index = max(2, 1 + int(actual_arr[3]))
 
         # Finds Longest Name
         longest_name = 0
+        longest_record = 0
         for row in rows[1:stop_index]:
             cells = row.find_all('td')
-            for cell in cells[1:2]:
-                longest_name = max(longest_name, int(len(cell.get_text()) / 4))
+            longest_name = max(longest_name, int(len(cells[1].get_text()) / 4))
+            longest_record = max(longest_record, int(len(cells[2].get_text()) / 4))
 
-        # Loop of table rows up to the number specified
-        for row in rows[1:stop_index]:
-            cells = row.find_all('td')
+        # Prints first person to obtain record if query is for 1 record
+        if stop_index == 2:
+            record = []
+            bool_val = True
+            while bool_val:
+                for row in rows[1:]:
+                    cells = row.find_all('td')
+                    if int(cells[0].get_text()) == 1:
+                        record = cells
+                    else:
+                        bool_val = False
+            print("Runner: " + record[1].get_text() + "\t Record: " + record[2].get_text() + "\t Date: " +
+                  record[3].get_text() + "\t Comment: ", end="")
+            f.write("Runner: " + record[1].get_text() + "\t Record: " + record[2].get_text() + "\t Date: " +
+                    record[3].get_text()+ "\t Comment: ")
             try:
-                title = str(cells[2]['title'])
+                print(record[2]['title'])
+                f.write(record[2]['title'] + "\n")
             except:
-                title = ""
+                print()
+                f.write("\n")
 
-            # Loop through data in each table row
-            for cell in cells[1:]:
-                f.write(cell.get_text() + "\t")
-                print(cell.get_text() + "\t", end="")
+        # Prints records up to the number specified
+        if stop_index > 2:
+            for row in rows[1:stop_index]:
+                cells = row.find_all('td')
 
-                # Adds tabs based on name length
-                if cells.index(cell) == 1 and stop_index > 2:
-                    times = int(len(cell.get_text()) / 4)
-                    while times < longest_name:
-                        print("\t", end="")
-                        f.write("\t")
-                        times += 1
-            print(title)
-            f.write(title)
-            f.write("\n")
+                # Prints runners name and tabs determined by length of runners name
+                print("Runner: " + cells[1].get_text() + "\t", end="")
+                f.write("Runner: " + cells[1].get_text() + "\t")
+                times = int(len(cells[1].get_text()) / 4)
+                while times < longest_name:
+                    print("\t", end="")
+                    f.write("\t")
+                    times += 1
+
+                # Prints record and tabs determined by length of record
+                print("Record: " + cells[2].get_text() + "\t", end="")
+                f.write("Record: " + cells[2].get_text() + "\t")
+                times = int(len(cells[2].get_text()) / 4)
+                while times < longest_record:
+                    print("\t", end="")
+                    f.write("\t")
+                    times += 1
+
+                # Prints Date and Comment of record
+                print("Date: " + cells[3].get_text() + "\tComment: ", end="")
+                f.write("Date: " + cells[3].get_text() + "\tComment: ")
+                try:
+                    print(cells[2]['title'])
+                    f.write(cells[2]['title'] + "\n")
+                except:
+                    print()
+                    f.write("\n")
 
 
 def list_options():  # Lists the scoreboards available
