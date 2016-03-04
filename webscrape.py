@@ -118,10 +118,13 @@ def list_options():  # Lists the scoreboards available
         for row in rows[1:]:
             cells = row.find_all('td')
 
-            # Only prints cells with information
-            if cells[0].get_text() != "":
-                f.write(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\n")
-                print(  cells[0].get_text().replace(' ', '_').replace('\'', ''))
+            # Supposed to print mission #'s
+            try:
+                print(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t" + cells[1]['title'])
+                f.write(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t" + cells[1]['title'] + "\n")
+            except:
+                print(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t")
+                f.write(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t" + "\n")
 
 
 def main():  # Option Select
