@@ -7,8 +7,7 @@ from bs4 import BeautifulSoup
 
 def query():  # Prints the top X results for a specific scoreboard
     # Input scoreboard information and number of items to display
-    input_str = input('level.mission.type.howmany: ')
-    input_arr = input_str.replace(' ', '').split('.')
+    input_arr = input('level.mission.type.howmany: ').replace(' ', '').split('.')
     default_arr = ['city_escape','mission_1','times','1']
     actual_arr = ['','','','']
 
@@ -27,7 +26,6 @@ def query():  # Prints the top X results for a specific scoreboard
         # Creates the soup, with URL determined by Type/Level/Mission
         url = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + actual_arr[2] + "/" + actual_arr[0] + "/" + \
               actual_arr[1]
-
         soup = BeautifulSoup(urllib.request.urlopen(url).read(), "html.parser")
 
         # Selects the table rows of interest
@@ -35,20 +33,20 @@ def query():  # Prints the top X results for a specific scoreboard
         rows = innerdata.find_all('tr')
 
         # Final row
-        stopIndex = 1 + int(actual_arr[3])
+        stop_index = 1 + int(actual_arr[3])
 
         # Finds Longest Name
-        longestName = 0
-        for row in rows[1:stopIndex]:
+        longest_name = 0
+        for row in rows[1:stop_index]:
             cells = row.find_all('td')
             for cell in cells[1:2]:
-                longestName = max(longestName, int(len(cell.get_text()) / 4))
+                longest_name = max(longest_name, int(len(cell.get_text()) / 4))
 
         # Loop of table rows up to the number specified
-        for row in rows[1:stopIndex]:
+        for row in rows[1:stop_index]:
             cells = row.find_all('td')
             try:
-                title = cells[2]['title']
+                title = str(cells[2]['title'])
             except:
                 title = ""
 
@@ -58,19 +56,18 @@ def query():  # Prints the top X results for a specific scoreboard
                 print(cell.get_text() + "\t", end="")
 
                 # Adds tabs based on name length
-                if cells.index(cell) == 1 and stopIndex > 2:
+                if cells.index(cell) == 1 and stop_index > 2:
                     times = int(len(cell.get_text()) / 4)
-                    while times < longestName:
+                    while times < longest_name:
                         print("\t", end="")
                         f.write("\t")
                         times += 1
-            print(str(title))
-            f.write(str(title))
+            print(title)
+            f.write(title)
             f.write("\n")
 
 
 def list_options():  # Lists the scoreboards available
-    # #times #rings #scores #races #bosses #freestyle
     # Input type to be listed
     input_str = input('Enter Type Here: ')
 
@@ -91,7 +88,8 @@ def list_options():  # Lists the scoreboards available
 
             # Only prints cells with information
             if cells[0].get_text() != "":
-                f.write(cells[0].get_text() + "\n")
+                f.write(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\n")
+                print(  cells[0].get_text().replace(' ', '_').replace('\'', ''))
 
 
 def main():  # Option Select
