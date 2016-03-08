@@ -19,10 +19,13 @@ def query():  # Prints the top X results for a specific scoreboard
     for index in range(0, len(default_arr)):
         if actual_arr[index] == '':
             actual_arr[index] = default_arr[index]
-    print("Query for: " + actual_arr[0] + " " + actual_arr[1] + " " + actual_arr[2])
 
     # Creates Output File
     with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
+
+        print("Query for: " + actual_arr[0] + " " + actual_arr[1] + " " + actual_arr[2])
+        f.write("Query for: " + actual_arr[0] + " " + actual_arr[1] + " " + actual_arr[2] + "\n")
+
         # Creates the soup, with URL determined by Type/Level/Mission
         url = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + actual_arr[2] + "/" + actual_arr[0] + "/" + \
               actual_arr[1]
@@ -122,18 +125,28 @@ def list_options():  # Lists the scoreboards available
         # Selects the table rows of interest
         innerdata = soup.find(class_="innerdata")
         rows = innerdata.find_all('tr')
+        current_level = ''
 
         # Loop of table rows
         for row in rows[1:]:
             cells = row.find_all('td')
 
             # Supposed to print mission #'s
-            try:
-                print(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t" + cells[1]['title'])
-                f.write(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t" + cells[1]['title'] + "\n")
-            except:
-                print(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t")
-                f.write(cells[0].get_text().replace(' ', '_').replace('\'', '') + "\t" + "\n")
+            if len(cells) == 6:
+                current_level = cells[0].get_text().replace(' ', '_').replace('\'', '')
+                try:
+                    print(current_level + " " + cells[1].find('img')['title'])
+                    f.write(current_level + " " + cells[1].find('img')['title'] + "\n")
+                except:
+                    print(current_level + " ")
+                    f.write(current_level + " " + "\n")
+            else:
+                try:
+                    print(current_level + " " + cells[0].find('img')['title'])
+                    f.write(current_level + " " + cells[0].find('img')['title'] + "\n")
+                except:
+                    print(current_level + " ")
+                    f.write(current_level + " " + "\n")
 
 
 def main():  # Option Select
