@@ -50,8 +50,17 @@ def query():  # Prints the top X results for a specific scoreboard
             while bool_val:
                 for row in rows[1:]:
                     cells = row.find_all('td')
-                    if int(cells[0].get_text()) == 1:
+                    if not record:
                         record = cells
+                    elif int(cells[0].get_text()) == 1:
+                        # If statement determines which date is older
+                        if int(cells[3].get_text()[6:]) < int(record[3].get_text()[6:]) or \
+                                (int(cells[3].get_text()[:2]) < int(record[3].get_text()[:2]) and
+                                         int(cells[3].get_text()[6:]) == int(record[3].get_text()[6:])) or \
+                                (int(cells[3].get_text()[3:5]) < int(record[3].get_text()[3:5]) and
+                                         int(cells[3].get_text()[:2]) == int(record[3].get_text()[:2]) and
+                                         int(cells[3].get_text()[6:]) == int(record[3].get_text()[6:])):
+                            record = cells
                     else:
                         bool_val = False
             print("Runner: " + record[1].get_text() + "\t Record: " + record[2].get_text() + "\t Date: " +
