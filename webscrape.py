@@ -1,6 +1,7 @@
 import datetime
 import sys
 import urllib.request
+import Levenshtein
 
 from bs4 import BeautifulSoup
 
@@ -160,16 +161,76 @@ def list_options():  # Lists the scoreboards available
                     f.write(current_level + " " + "\n")
 
 
+def populate_options(record_type):  # Creates an array of level_arrs for the specified record_type, each level_arr has
+                                    # the level name and all its missions
+    # Creates the soup, with URL determined by record_type
+    url = "http://www.soniccenter.org/rankings/sonic_adventure_2_b/" + record_type
+    soup = BeautifulSoup(urllib.request.urlopen(url).read(), "html.parser")
+
+    # Selects the table rows of interest
+    innerdata = soup.find(class_="innerdata")
+    rows = innerdata.find_all('tr')
+    type_arr = []
+    level_arr = []
+
+    # Loop of table rows
+    for row in rows[2:]:
+        cells = row.find_all('td')
+
+        # Appends level_arr first with mission name, then with all missions, when a new mission name appears it appends
+        # level_arr to type_arr and recreates level_arr
+        if len(cells) == 6:
+            if level_arr:
+                type_arr.append(level_arr)
+            current_level = cells[0].get_text().replace(' ', '_').replace('\'', '')
+            level_arr = [current_level]
+            try:
+                level_arr.append(cells[1].find('img')['title'].replace(' ', '_').replace('\'', ''))
+            except:
+                level_arr.append(cells[1].find('a').get_text().replace(' ', '_').replace('\'', ''))
+        else:
+            try:
+                level_arr.append(cells[0].find('img')['title'].replace(' ', '_').replace('\'', ''))
+            except:
+                level_arr.append(cells[0].find('a').get_text().replace(' ', '_').replace('\'', ''))
+    return type_arr
+
+
+def best_distance(array, string):  # Returns index of item in an array with the lowest distance from a string
+    index = -1
+    for idx, val in enumerate(array):
+        val_distance = Levenshtein.distance(val, string)
+        if index == -1:
+            index = idx
+            distance = val_distance
+        elif distance > val_distance:
+            index = idx
+            distance = val_distance
+    return index
+
+
 def main():  # Option Select
+    # 3D array of options
+    # 1st index is record_type (times, rings, scores, races, bosses, freestyle)
+    # 2nd index is level(CE, FR, WC, egg_golem, 3_Lap, etc.)
+    # 3rd index is mission (1, 2, 3, 4, 5, hero, dark, etc.)
+    options = [populate_options('times'), populate_options('rings'), populate_options('scores'),
+               populate_options('races'), populate_options('bosses'), populate_options('freestyle')]
+
     while True:
         try:
-            what_do = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \n'))
+            what_do = int(input('Exit:\t0 \nQuery:\t1 \nList:\t2 \nPrint Options:\t3 \n'))
             if what_do == 0:
                 break
             if what_do == 1:
                 query()
             if what_do == 2:
                 list_options()
+            if what_do == 3:
+                for sub_arr in options[int(input("Which type? "))]:
+                    for item in sub_arr:
+                        print(item + " ", end="")
+                    print()
         except:
             continue
 
