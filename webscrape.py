@@ -8,17 +8,27 @@ from bs4 import BeautifulSoup
 def query():  # Prints the top X results for a specific scoreboard
     # Input scoreboard information and number of items to display
     input_arr = input('level.mission.type.howmany: ').replace(' ', '').split('.')
-    default_arr = ['city_escape','mission_1','times','1']
-    actual_arr = ['','','','']
+    times_arr = ['city_escape', 'mission_1', 'times', '1']
+    bosses_arr = ['big_foot', 'hero', 'bosses', '1']
+    races_arr = ['3_lap', 'beginner', 'races', '1']
+    actual_arr = ['', '', '', '']
 
     # Inputs user information into corresponding spots in actual_arr
     for index, item in reversed(list(enumerate(input_arr[:], start=0))):
         actual_arr[index] = item
 
+    # Picks default values based on type specified
+    if actual_arr[2] == 'bosses':
+        chosen_arr = bosses_arr
+    elif actual_arr[2] == 'races':
+        chosen_arr = races_arr
+    else:
+        chosen_arr = times_arr
+
     # Inputs default information into corresponding empty spots in actual_arr
-    for index in range(0, len(default_arr)):
+    for index in range(0, len(chosen_arr)):
         if actual_arr[index] == '':
-            actual_arr[index] = default_arr[index]
+            actual_arr[index] = chosen_arr[index]
 
     # Creates Output File
     with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
@@ -58,18 +68,18 @@ def query():  # Prints the top X results for a specific scoreboard
                     elif int(cells[0].get_text()) == 1:
                         # If statement determines which date is older
                         if int(cells[3].get_text()[6:]) < int(record[3].get_text()[6:]) or \
-                                (int(cells[3].get_text()[:2]) < int(record[3].get_text()[:2]) and
-                                         int(cells[3].get_text()[6:]) == int(record[3].get_text()[6:])) or \
-                                (int(cells[3].get_text()[3:5]) < int(record[3].get_text()[3:5]) and
-                                         int(cells[3].get_text()[:2]) == int(record[3].get_text()[:2]) and
-                                         int(cells[3].get_text()[6:]) == int(record[3].get_text()[6:])):
+                            (int(cells[3].get_text()[:2]) < int(record[3].get_text()[:2]) and
+                                int(cells[3].get_text()[6:]) == int(record[3].get_text()[6:])) or \
+                            (int(cells[3].get_text()[3:5]) < int(record[3].get_text()[3:5]) and
+                                int(cells[3].get_text()[:2]) == int(record[3].get_text()[:2]) and
+                                int(cells[3].get_text()[6:]) == int(record[3].get_text()[6:])):
                             record = cells
                     else:
                         bool_val = False
             print("Runner: " + record[1].get_text() + "\t Record: " + record[2].get_text() + "\t Date: " +
                   record[3].get_text() + "\t Comment: ", end="")
             f.write("Runner: " + record[1].get_text() + "\t Record: " + record[2].get_text() + "\t Date: " +
-                    record[3].get_text()+ "\t Comment: ")
+                    record[3].get_text() + "\t Comment: ")
             try:
                 print(record[2]['title'])
                 f.write(record[2]['title'] + "\n")
@@ -112,6 +122,7 @@ def query():  # Prints the top X results for a specific scoreboard
 
 
 def list_options():  # Lists the scoreboards available
+    # times rings scores races bosses freestyle
     # Input type to be listed
     input_str = input('Enter Type Here: ')
 
