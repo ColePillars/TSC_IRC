@@ -6,30 +6,50 @@ import Levenshtein
 from bs4 import BeautifulSoup
 
 
-def query():  # Prints the top X results for a specific scoreboard
-    # Input scoreboard information and number of items to display
-    input_arr = input('level.mission.type.howmany: ').replace(' ', '').split('.')
-    times_arr = ['city_escape', 'mission_1', 'times', '1']
-    bosses_arr = ['big_foot', 'hero', 'bosses', '1']
-    races_arr = ['3_lap', 'beginner', 'races', '1']
+def parse_query(input_data):
+    input_arr = ['', '', '', '']
+    for idx, val in enumerate(input_data):
+        input_arr[idx] = val
+        print(val)
     actual_arr = ['', '', '', '']
+    print(input_arr)
 
-    # Inputs user information into corresponding spots in actual_arr
-    for index, item in reversed(list(enumerate(input_arr[:], start=0))):
-        actual_arr[index] = item
+    # Creates 2d array defined by type
+    type_options = ['times', 'rings', 'scores', 'races', 'bosses', 'freestyle']
+    print(best_distance(type_options, input_arr[2]))
+    type_index = best_distance(type_options, input_arr[2])
 
-    # Picks default values based on type specified
-    if actual_arr[2] == 'bosses':
-        chosen_arr = bosses_arr
-    elif actual_arr[2] == 'races':
-        chosen_arr = races_arr
-    else:
-        chosen_arr = times_arr
+    options = populate_options(type_options[type_index])
+    print(options)
 
-    # Inputs default information into corresponding empty spots in actual_arr
-    for index in range(0, len(chosen_arr)):
-        if actual_arr[index] == '':
-            actual_arr[index] = chosen_arr[index]
+    levels = [row[0] for row in options]
+    print(levels)
+
+    level_index = best_distance(levels, input_arr[0])
+
+    missions = options[level_index][1:]
+    print(missions)
+
+    mission_index = best_distance(missions, input_arr[1])
+
+    print(actual_arr)
+
+    actual_arr[3] = 1
+    print(actual_arr)
+
+    actual_arr[2] = type_options[type_index]
+    print(actual_arr)
+
+    actual_arr[1] = options[level_index][1 + mission_index]
+    print(actual_arr)
+
+    actual_arr[0] = options[level_index][0]
+    print(actual_arr)
+
+    return actual_arr
+
+
+def output_query(actual_arr):
 
     # Creates Output File
     with open(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S") + '.output.txt', 'w') as f:
@@ -120,6 +140,10 @@ def query():  # Prints the top X results for a specific scoreboard
                 except:
                     print()
                     f.write("\n")
+
+
+def query():  # Prints the top X results for a specific scoreboard
+    output_query(parse_query(input('level.mission.type.howmany: ').replace(' ', '').split('.')))
 
 
 def list_options():  # Lists the scoreboards available
@@ -214,8 +238,8 @@ def main():  # Option Select
     # 1st index is record_type (times, rings, scores, races, bosses, freestyle)
     # 2nd index is level(CE, FR, WC, egg_golem, 3_Lap, etc.)
     # 3rd index is mission (1, 2, 3, 4, 5, hero, dark, etc.)
-    options = [populate_options('times'), populate_options('rings'), populate_options('scores'),
-               populate_options('races'), populate_options('bosses'), populate_options('freestyle')]
+    super_options = [populate_options('times'), populate_options('rings'), populate_options('scores'),
+                     populate_options('races'), populate_options('bosses'), populate_options('freestyle')]
 
     while True:
         try:
@@ -227,7 +251,7 @@ def main():  # Option Select
             if what_do == 2:
                 list_options()
             if what_do == 3:
-                for sub_arr in options[int(input("Which type? "))]:
+                for sub_arr in super_options[int(input("Which type? "))]:
                     for item in sub_arr:
                         print(item + " ", end="")
                     print()
